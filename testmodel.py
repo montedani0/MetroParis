@@ -2,7 +2,7 @@ from model.fermata import Fermata
 from model.model import Model
 
 model = Model()
-model.buildGraph()
+model.buildGraphPesato()
 print("Numero Nodi: ", model.get_numNodi())
 print("Numero Archi: ", model.get_numArchi())
 
@@ -19,3 +19,8 @@ for i in range (0,10):
     print(nodiDFS[i])
 
 
+print ("=========================================================")
+print("Archi con peso 2")
+archiMaggiori = model.getArchiPesoMaggiore()
+for a in archiMaggiori:
+    print(a[0], "-->", a[1], ":", a[2]["weight"])
