@@ -1,3 +1,5 @@
+from functools import total_ordering
+
 import flet as ft
 
 
@@ -10,7 +12,7 @@ class Controller:
         self._fermataPartenza = None
 
     def handleCreaGrafo(self,e):
-        self._model.buildGraph()
+        self._model.buildGraphPesato()
         self._view.lst_result.controls.clear()
         self._view.lst_result.controls.append(ft.Text("Grafo correttamente creato"))
         self._view.lst_result.controls.append(ft.Text(f"Il grafo è costituito da {self._model.get_numNodi()} nodi"))
@@ -58,3 +60,35 @@ class Controller:
             self._fermataArrivo = None
         else:
             self._fermataArrivo = e.control.data
+
+
+    def handleTrovaPercorso(self,e):
+        if self._fermataArrivo is None or self._fermataPartenza is None:
+            self._view.lst_result.controls.clear()
+            self._view.lst_result.controls.append(
+                ft.Text("Attenzione! Non è stata selezionata una stazione di Partenza", color="red"))
+            self._view.update_page()
+            return
+
+        totTime, optPath = self._model.getShortestPath(self._fermataPartenza,self._fermataArrivo)
+
+        if optPath == []:
+            self._view.lst_result.controls.clear()
+            self._view.lst_result.controls.append(
+                ft.Text(f"Non ho trovato un cammino fra {self._fermataPartenza} e {self._fermataArrivo}", color="orange"))
+            self._view.update_page()
+            return
+
+        self._view.lst_result.controls.clear()
+        self._view.lst_result.controls.append(
+            ft.Text(f"Ho trovato un cammino fra {self._fermataPartenza} e {self._fermataArrivo} che impiega {totTime} minuti", color="green"))
+        self._view.lst_result.controls.append(
+            ft.Text(
+                f"Di seguito la lista di fermate",
+                color="green"))
+        for v in optPath:
+            self._view.lst_result.controls.append(
+                ft.Text(v))
+        self._view.update_page()
+
+
